@@ -1,8 +1,10 @@
 ---
-title: "Practical Machine Learning Course Project"
+title: "Measure How Well People Perform Weight Lifting Exercises"
 author: "Natalie Phillips"
 date: "10 August 2016"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
