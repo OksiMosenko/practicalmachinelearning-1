@@ -7,21 +7,23 @@ library(dplyr)
 # ".\\data\\pml-training.csv"
 # ".\\data\\pml-testing.csv"
 
-trainClasses <- c("integer",
-                  "factor",
-                  "integer",
-                  "integer",
-                  "character",
-                  
-                  )
+#trainClasses <- c("integer",
+#                  "factor",
+#                  "integer",
+#                  "integer",
+#                  "character",
+#                  )
 train <- read.csv(".\\data\\pml-training.csv",
                   na.strings = c("NA", "#DIV/0!")
                   )
+test <- read.csv(".\\data\\pml-testing.csv",
+                 na.strings = c("NA", "#DIV/0!")
+                    )
 str(train)
 names(train)
 
 lapply(train, class)
-
+trainClass <- sapply(train, class)
 
 ddply(train, names(train), class)
 adply(train, 2, class)
@@ -39,6 +41,7 @@ isnaTrain <- colwise(nmissing)(train)
 
 aboutTrain <- data.frame(names(train))
 aboutTrain <- cbind(aboutTrain, No_of_na = unname(t(isnaTrain)))
+#aboutTrain <- cbind(aboutTrain, Class = head(unname(unlist(trainClass))))
 write.csv(aboutTrain, file = ".\\data\\aboutTrain.csv")
 
 sapply(train, min)
@@ -51,6 +54,10 @@ train2 <- select(train, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 37, 38, 39, 40, 41,
                  68, 84, 85, 86, 102, 113, 114, 115, 116, 117, 118, 119, 120, 
                  121, 122, 123, 124, 140, 151, 152, 153, 154, 155, 156, 157, 
                  158, 159, 160)
+
+
+train2class <- sapply(train2, class)
+train2class[train2class == "factor"]
 filter(aboutTrain, No_of_na < 19000)
 colsTrain <- c(select(filter(aboutTrain, No_of_na < 19000), names.train.))
 train3 <- subset(train,
@@ -59,6 +66,10 @@ train3 <- subset(train,
 match(names(train), colsTrain)
 train %>%
     select(colsTrain)
+
+#All cases are now complte
+colwise(nmissing)(train2)
+sum(complete.cases(train2)==FALSE)
 
 table(train$user_name, useNA = "ifany")
 table(train$raw_timestamp_part_1, useNA = "ifany")
