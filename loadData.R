@@ -47,6 +47,9 @@ write.csv(aboutTrain, file = ".\\data\\aboutTrain.csv")
 sapply(train, min)
 
 arrange(aboutTrain, No_of_na)
+NAs <- which(aboutTrain$No_of_na > 19000)
+No_of_na = unname(t(isnaTrain))
+which(No_of_na > 19000)
 
 #keep columns with less than 19000 nas
 train2 <- select(train, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 37, 38, 39, 40, 41, 
