@@ -118,23 +118,76 @@ modelRF <- train(classe ~ .,
                   prox = TRUE)
 ```
 
+The model has over an 98% accuracy:
+
+```r
+confusionMatrix(modelRF)
+```
+
+```
+Cross-Validated (10 fold) Confusion Matrix 
+
+(entries are percentual average cell counts across resamples)
+ 
+          Reference
+Prediction    A    B    C    D    E
+         A 28.4  0.3  0.0  0.0  0.0
+         B  0.0 18.9  0.2  0.0  0.1
+         C  0.0  0.2 17.2  0.3  0.0
+         D  0.0  0.0  0.1 16.0  0.1
+         E  0.0  0.0  0.0  0.0 18.2
+                            
+ Accuracy (average) : 0.9871
+```
+
+This model was applied to the test set with 100% success.
+
+We have left over training data which we can apply and test the predictions on. We don't need to perform any preprocessing as no transformations were performed. Also the prediction model will only reference those named columns used in the model.
 
 
-modelRF4$finalModel$importance
-modelRF4$finalModel$confusion
-confusionMatrix(modelRF4)
+```r
+# Predicting using the left over training data
+test2 <- train2[-trainSmall, ]
+pred <- predict(modelRF, test2)
+confusionMatrix(pred, test2$classe)
+```
 
+```
+Confusion Matrix and Statistics
 
+          Reference
+Prediction    A    B    C    D    E
+         A 3904   17    0    0    0
+         B    1 2614   17    0    3
+         C    0   25 2373   32    1
+         D    0    1    5 2219   16
+         E    0    0    0    0 2504
 
+Overall Statistics
+                                          
+               Accuracy : 0.9914          
+                 95% CI : (0.9897, 0.9929)
+    No Information Rate : 0.2844          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9891          
+ Mcnemar's Test P-Value : NA              
 
+Statistics by Class:
 
-## Loading and Processing the Raw Data
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.9997   0.9838   0.9908   0.9858   0.9921
+Specificity            0.9983   0.9981   0.9949   0.9981   1.0000
+Pos Pred Value         0.9957   0.9920   0.9761   0.9902   1.0000
+Neg Pred Value         0.9999   0.9961   0.9981   0.9972   0.9982
+Prevalence             0.2844   0.1935   0.1744   0.1639   0.1838
+Detection Rate         0.2843   0.1904   0.1728   0.1616   0.1823
+Detection Prevalence   0.2855   0.1919   0.1770   0.1632   0.1823
+Balanced Accuracy      0.9990   0.9910   0.9928   0.9919   0.9960
+```
 
-Data were obtained already split into
-[training](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv) and
-[testing](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv) sets.
-More details about how the data were collected can be found here,
-[http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har)
+## Conclusions
+With over 99% accuracy this model shows just how accurately motion can be captured. This will likely open  up many new coaching applications and gadgets in the fitness industry and beyond.
 
 
 
@@ -149,3 +202,5 @@ It appears one of the most important measures when predicting how well an excerc
 is performed is **new_windowyes**. I wonder if this value can be known outside of
 an experimental environment? Perhaps next time this variable along with **num_window**
 should be removed.
+
+I more powerful machine or would enable the model to be built with all of the observations which may improve the accuracy some what.

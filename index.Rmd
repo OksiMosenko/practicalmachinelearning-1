@@ -160,23 +160,24 @@ modelRF <- train(classe ~ .,
                   prox = TRUE)
 ```
 
+The model has over an 98% accuracy:
+```{r results}
+confusionMatrix(modelRF)
+```
 
+This model was applied to the test set with 100% success.
 
-modelRF4$finalModel$importance
-modelRF4$finalModel$confusion
-confusionMatrix(modelRF4)
+We have left over training data which we can apply and test the predictions on. We don't need to perform any preprocessing as no transformations were performed. Also the prediction model will only reference those named columns used in the model.
 
+```{r prediction, cache=TRUE}
+# Predicting using the left over training data
+test2 <- train2[-trainSmall, ]
+pred <- predict(modelRF, test2)
+confusionMatrix(pred, test2$classe)
+```
 
-
-
-
-## Loading and Processing the Raw Data
-
-Data were obtained already split into
-[training](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv) and
-[testing](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv) sets.
-More details about how the data were collected can be found here,
-[http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har)
+## Conclusions
+With over 99% accuracy this model shows just how accurately motion can be captured. This will likely open  up many new coaching applications and gadgets in the fitness industry and beyond.
 
 
 
@@ -191,3 +192,5 @@ It appears one of the most important measures when predicting how well an excerc
 is performed is **new_windowyes**. I wonder if this value can be known outside of
 an experimental environment? Perhaps next time this variable along with **num_window**
 should be removed.
+
+I more powerful machine or would enable the model to be built with all of the observations which may improve the accuracy some what.
