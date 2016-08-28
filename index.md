@@ -4,6 +4,8 @@ Natalie Phillips
 
 
 
+
+
 ## Synopsis
 
 It is now common for people to measure how much of an activity they are doing.
@@ -38,7 +40,7 @@ The data were first downloaded. A check is performed to see if the data is alrea
 
 
 
-The data are then loaded into test and train set. There are two $NA$ strings, $NA$ and $#DIV/0!$ in the data.
+The data are then loaded into test and train set. There are two *NA* strings, *NA* and *#DIV/0!* in the data.
 
 
 ```r
@@ -52,7 +54,7 @@ test <- read.csv(".\\data\\pml-testing.csv",
 
 The train set has 160 variables and 19622 observations. The test set has the same number of variables less the *classe* (results) column and 20 observations.
 
-Cleaning the data was performed in three ways
+Cleaning of the data was performed in three ways:
 
 * where most of the measurements were $NA$s the variable was removed
 * names dates and indexes are not relevant to the prediction were removed
@@ -77,13 +79,44 @@ train2 <- train[, -NA_Col] # Remove columns with NAs
 
 # Remove names and dates
 train2 <- train2[, -(1:5)]
-dim(train2)
+
+# Remove outlier
+summary(train2$gyros_dumbbell_x)
 ```
 
 ```
-## [1] 19622    55
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-204.0000   -0.0300    0.1300    0.1611    0.3500    2.2200 
 ```
 
+```r
+locat <- which(train2$gyros_dumbbell_x < -10)
+train2 <- train2[-locat, ]
+```
+
+The new training set has 55 variables and 19621 observations. No other preprocessing was performed as Random Forests don't require normal data. Removing the outlier has allowed data for some of the variables to be less skewed. Take the variable *gyros_dumbbell_x* for example.You can see from the two graphs below the change removing the outlier allows us to see the true nature of the movement:
+
+<div class="rimage center"><img src="fig/plot1-1.png" class="plot" /></div>
+
+I chose Random Forests were chosen to model the type of movement due to their requation for accuracy. The error was calculated to be k-fold with 10 foldes to provide a reasonable out of sample estimage. Unfortunately the computer I was using for the machine learning could not build a model with all of the observations. The observation was bought down to a third to make the calculations more manageable. 
+
+
+```r
+library(caret)
+library(rpart)
+
+# Make the size more manageable and speed up computations
+set.seed(1375)
+trainSmall <- createDataPartition(y = train2$classe, p = 0.3, list = FALSE)
+train3 <- train2[trainSmall, ]
+
+# Train the Random Forest model with 10 fold Cross Validations 
+modelRF <- train(classe ~ .,
+                  data = train3,
+                  method = "rf",
+                  trControl = trainControl(method = "cv", number = 10),
+                  prox = TRUE)
+```
 
 
 
