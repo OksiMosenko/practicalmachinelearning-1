@@ -57,3 +57,7 @@ modelTree <- train(classe ~ .,
 
 rpart1 <- rpart(class3 ~ .,
                 data = train2)
+
+
+Show this:
+modelRF4$finalModel$confusion
